@@ -17,3 +17,11 @@ void np_array_1dim(double *x, size_t s, double *y) {
 		y[i] = x[i]+1;
 	}
 }
+
+void np_array_2dim(const int m, const int n, const double **x, double **y)
+{
+    size_t i, j;
+    for(i=0; i<m; i++)
+        for(j=0; j<n; j++)
+            y[i][j] = x[i][j]+1;
+}
