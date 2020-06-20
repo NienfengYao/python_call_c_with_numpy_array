@@ -17,3 +17,11 @@ Calling a C function from python with numpy arrays as arguments
     * __array_interface__
       * data: A 2-tuple whose first argument is an integer that points to the data-area storing the array contents.
       * strides: a C-style contiguous array or a Tuple of strides which provides the number of bytes needed to jump to the next array element in the corresponding dimension.
+  * [Passing multidimensional numpy arrays to C using cffi](https://gist.github.com/arjones6/5533938)
+  * [Python, ctypes, multi-Dimensional Array](https://stackoverflow.com/questions/11384015/python-ctypes-multi-dimensional-array)
+  * [numpy.ndarray.ctypes](https://numpy.org/devdocs/reference/generated/numpy.ndarray.ctypes.html)
+  * [cython: tutorials NumpyPointerToC](https://github.com/cython/cython/wiki/tutorials-NumpyPointerToC)
+  * [Python使用C扩展介绍](https://www.cnblogs.com/qxcheng/p/12541186.html)
+  * [ctypes — A foreign function library for Python](https://docs.python.org/3/library/ctypes.html)
+  * [用Python ctypes 建立與C的介面](https://yodalee.blogspot.com/2017/03/python-ctypes-c.html)
+  * [dvida/py-ctypes-multidimensional-arrays](https://github.com/dvida/py-ctypes-multidimensional-arrays)
