@@ -69,6 +69,96 @@ def ex_np_array_3dim(lib):
 	print("y:", y)
 
 
+def ex_np_array_3dim_3ptr(lib):
+	x = np.arange(24, dtype=np.float64).reshape((2,3,4))
+	y = np.zeros_like(x)
+	if not x.flags['C_CONTIGUOUS']:
+		x = np.ascontiguous(x, dtype=x.dtype)
+
+	# Init ctypes types
+	DOUBLE = ctypes.c_double
+	PDOUBLE = ctypes.POINTER(DOUBLE)
+	PPDOUBLE = ctypes.POINTER(PDOUBLE)
+	PPPDOUBLE = ctypes.POINTER(PPDOUBLE)
+
+	# Init needed data types
+	ARR_DIMX = DOUBLE*x.shape[2]
+	ARR_DIMY = PDOUBLE*x.shape[1]
+	ARR_DIMZ = PPDOUBLE*x.shape[0]
+
+	# Init pointer
+	x_arr_ptr = ARR_DIMZ()
+	y_arr_ptr = ARR_DIMZ()
+
+	# Fill the 2D ctypes array with values
+	for i, row in enumerate(x):
+		x_arr_ptr[i] = ARR_DIMY()
+		y_arr_ptr[i] = ARR_DIMY()
+		# print("arr_ptr[{}] = {}".format(i, arr_ptr[i]))
+		for j, col in enumerate(row):
+			x_arr_ptr[i][j] = ARR_DIMX()
+			y_arr_ptr[i][j] = ARR_DIMX()
+			# print("arr_ptr[{}][{}] = {}".format(i, j, arr_ptr[i][j]))
+			for k, val in enumerate(col):
+				x_arr_ptr[i][j][k] = val
+				# print("arr_ptr[{}][{}][{}] = {}".format(i, j, k, arr_ptr[i][j][k]))
+
+
+	func = lib.np_array_3dim_3ptr
+	func.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, PPPDOUBLE, PPPDOUBLE]
+	func.restype = None
+	m = ctypes.c_int(x.shape[0])
+	n = ctypes.c_int(x.shape[1])
+	o = ctypes.c_int(x.shape[2])
+	func(m, n, o, x_arr_ptr, y_arr_ptr)
+	for i in range(2):
+		for j in range(3):
+			for k in range(4):
+				y[i,j,k] = y_arr_ptr[i][j][k]
+	print("x:", x)
+	print("y:", y)
+
+
+def ex_np_array_3dim_3ptr_xx(lib):
+	x = np.arange(24, dtype=np.float64).reshape((2,3,4))
+	y = np.zeros_like(x)
+	if not x.flags['C_CONTIGUOUS']:
+		x = np.ascontiguous(x, dtype=x.dtype)
+
+	# Init ctypes types
+	DOUBLE = ctypes.c_double
+	PDOUBLE = ctypes.POINTER(DOUBLE)
+	PPDOUBLE = ctypes.POINTER(PDOUBLE)
+	PPPDOUBLE = ctypes.POINTER(PPDOUBLE)
+
+	# Init needed data types
+	ARR_DIMX = DOUBLE*x.shape[2]
+	ARR_DIMY = PDOUBLE*x.shape[1]
+	ARR_DIMZ = PPDOUBLE*x.shape[0]
+
+	# Init pointer
+	arr_ptr = ARR_DIMZ()
+
+	# Fill the 2D ctypes array with values
+	for i, row in enumerate(x):
+		arr_ptr[i] = ARR_DIMY()
+		for j, col in enumerate(row):
+			arr_ptr[i][j] = ARR_DIMX()
+			for k, val in enumerate(col):
+				arr_ptr[i][j][k] = val
+
+
+	func = lib.np_array_3dim_3ptr_xx
+	# _npp = ndpointer(dtype=PPPDOUBLE, ndim=1, flags='C')
+	func.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, PPPDOUBLE]
+	func.restype = None
+	m = ctypes.c_int(x.shape[0])
+	n = ctypes.c_int(x.shape[1])
+	o = ctypes.c_int(x.shape[2])
+	func(m, n, o, arr_ptr)
+	print("x:", x)
+
+
 def main():
 	lib = ctypes.cdll.LoadLibrary('./module.so')
 	print('ex_int(): return the square of int')
@@ -79,6 +169,10 @@ def main():
 	ex_np_array_2dim(lib)
 	print('ex_np_array_3dim(): return y = x+1')
 	ex_np_array_3dim(lib)
+	print('ex_np_array_3dim_3ptr_xx()')
+	ex_np_array_3dim_3ptr_xx(lib)
+	print('ex_np_array_3dim_3ptr()')
+	ex_np_array_3dim_3ptr(lib)
 
 
 if __name__ == '__main__':
