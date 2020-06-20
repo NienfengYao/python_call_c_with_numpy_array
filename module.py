@@ -51,6 +51,24 @@ def ex_np_array_2dim(lib):
 	print("y:", y)
 
 
+def ex_np_array_3dim(lib):
+	x = np.arange(24, dtype=np.float64).reshape((2,3,4))
+	y = np.zeros_like(x)
+	if not x.flags['C_CONTIGUOUS']:
+		x = np.ascontiguous(x, dtype=x.dtype)
+
+	func = lib.np_array_3dim
+	_npp = ndpointer(dtype=np.float64, ndim=3, flags='C')
+	func.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, _npp, _npp]
+	func.restype = None
+	m = ctypes.c_int(x.shape[0])
+	n = ctypes.c_int(x.shape[1])
+	o = ctypes.c_int(x.shape[2])
+	func(m, n, o, x, y)
+	print("x:", x)
+	print("y:", y)
+
+
 def main():
 	lib = ctypes.cdll.LoadLibrary('./module.so')
 	print('ex_int(): return the square of int')
@@ -59,6 +77,8 @@ def main():
 	ex_np_array_1dim(lib)
 	print('ex_np_array_2dim(): return y = x+1')
 	ex_np_array_2dim(lib)
+	print('ex_np_array_3dim(): return y = x+1')
+	ex_np_array_3dim(lib)
 
 
 if __name__ == '__main__':
